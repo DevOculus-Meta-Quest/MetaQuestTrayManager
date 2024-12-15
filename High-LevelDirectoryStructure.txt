@@ -30,3 +30,41 @@ MetaQuestTrayManager/
 │   ├── ProfilesView.xaml.cs      // Logic for ProfilesView.xaml
 │   ├── AirlinkView.xaml          // UI for Airlink settings
 │   ├── AirlinkView.xaml.cs       // Logic for AirlinkView.xaml
+
+Your project structure looks clean and well-organized! 🎉 Here’s a quick breakdown and confirmation of how everything looks, along with a few suggestions to make it even better.
+
+---
+
+### **Current Structure Analysis**
+1. **Managers (Core Logic)**  
+   Contains all functional managers for your app:
+   - `ADBManager.cs`: Handles communication with the headset via ADB.  
+   - `AirlinkManager.cs`: Manages Airlink configurations.  
+   - `AudioManager.cs`: Manages audio devices and profiles.  
+   - `DeviceManager.cs`: Detects VR headsets and GPU.  
+   - `GameLibraryManager.cs`: Scans Oculus/Steam libraries.  
+   - `OptimizationManager.cs`: Applies optimizations via CLI tools.  
+   - `ProfileManager.cs`: Manages game profiles and settings.  
+   - `RegistryManager.cs`: Handles registry tweaks.
+
+2. **Models (Data Structures)**  
+   Defines the data used across the app:
+   - `AudioProfile.cs`: Represents audio configurations.  
+   - `DeviceInfo.cs`: Represents detected headset and GPU information.  
+   - `GameProfile.cs`: Stores game-specific profiles and settings.
+
+3. **Utils (Helper Classes)**  
+   Provides reusable helper utilities:
+   - `CommandRunner.cs`: Runs CLI commands like ADB and OculusDebugToolCLI.  
+   - `FileUtils.cs`: Simplifies file operations.  
+   - `Logger.cs`: Handles logging for debugging.  
+   - `NetworkUtils.cs`: Assists with network detection/optimization.
+
+4. **Views (UI Files)**  
+   Currently only includes the main window:
+   - `MainWindow.xaml`: The primary UI.  
+   - `MainWindow.xaml.cs`: Code-behind for main logic.
+
+5. **App and Configuration**  
+   - `App.xaml` and `App.xaml.cs`: Handles application lifecycle and startup.  
+   - `AssemblyInfo.cs`: Project assembly metadata.
