@@ -1,39 +1,53 @@
 MetaQuestTrayManager/
 ├── MetaQuestTrayManager.csproj   // Project file
-├── App.xaml                      // Entry point of the application
-├── App.xaml.cs                   // Application-wide events and setup
-├── MainWindow.xaml               // Main user interface for the application
+├── App.xaml                      // Entry point for the WPF app
+├── App.xaml.cs                   // Application-wide events and startup logic
+├── AssemblyInfo.cs               // Assembly metadata
+├── MainWindow.xaml               // Main user interface
 ├── MainWindow.xaml.cs            // MainWindow logic
-├── Resources/                    // Contains static resources
-│   ├── Icons/TrayIcon.ico        // Icon for the tray application
-│   ├── Styles.xaml               // Shared styles and themes
-├── Managers/                     // Core logic modules for managing features
-│   ├── DeviceManager.cs          // Detects headsets and GPU
-│   ├── ProfileManager.cs         // Manages game profiles
+├── Resources/                    // Static resources like icons and styles
+│   ├── Icons/                    // Organized icons for tray and app
+│   │   ├── TrayIcon.ico
+│   │   ├── ProfileIcon.ico
+│   │   ├── AirlinkIcon.ico
+│   ├── Styles.xaml               // Common styles and themes
+├── Views/                        // UI Views and XAML files
+│   ├── TrayIcon/                 // Tray menu XAML and logic
+│   │   ├── TrayIcon.xaml
+│   │   ├── TrayIcon.xaml.cs
+│   ├── ProfilesView.xaml         // Game profiles management UI
+│   ├── ProfilesView.xaml.cs
+│   ├── AirlinkView.xaml          // Airlink-specific UI
+│   ├── AirlinkView.xaml.cs
+├── Managers/                     // Core logic and feature managers
+│   ├── ADBManager.cs             // Handles ADB commands
+│   ├── AirlinkManager.cs         // Airlink settings management
 │   ├── AudioManager.cs           // Handles audio switching and configurations
-│   ├── GameLibraryManager.cs     // Scans Oculus/Steam game libraries
-│   ├── OptimizationManager.cs    // Handles OculusDebugToolCLI and tweaks
-│   ├── ADBManager.cs             // Communicates with the headset via ADB
-│   ├── AirlinkManager.cs         // Manages Airlink settings
-│   ├── RegistryManager.cs        // Applies registry-based optimizations
-├── Utils/                        // Helper and utility classes
-│   ├── Logger.cs                 // Centralized logging functionality
-│   ├── FileUtils.cs              // Handles file operations
-│   ├── CommandRunner.cs          // Runs CLI commands
-│   ├── NetworkUtils.cs           // Manages network checks and optimizations
-├── Models/                       // Contains data models
-│   ├── GameProfile.cs            // Data model for game profiles
-│   ├── DeviceInfo.cs             // Data model for detected headsets/GPU
-│   ├── AudioProfile.cs           // Data model for audio configurations
-├── Views/                        // Additional WPF Views
-│   ├── ProfilesView.xaml         // UI for managing profiles
-│   ├── ProfilesView.xaml.cs      // Logic for ProfilesView.xaml
-│   ├── AirlinkView.xaml          // UI for Airlink settings
-│   ├── AirlinkView.xaml.cs       // Logic for AirlinkView.xaml
+│   ├── DeviceManager.cs          // Detects connected devices (headsets, GPU)
+│   ├── GameLibraryManager.cs     // Scans Oculus and Steam games
+│   ├── OptimizationManager.cs    // Applies optimizations with OculusDebugToolCLI
+│   ├── ProfileManager.cs         // Game profile management
+│   ├── RegistryManager.cs        // Handles registry tweaks
+│   ├── SettingsManager.cs        // Manages user settings and preferences
+├── Models/                       // Data models for structured data
+│   ├── AudioProfile.cs           // Audio profile model
+│   ├── DeviceInfo.cs             // Headset and GPU model
+│   ├── GameProfile.cs            // Game profile data structure
+├── Utils/                        // Utility classes for various tasks
+│   ├── CommandRunner.cs          // Handles command-line execution
+│   ├── FileUtils.cs              // File and directory operations
+│   ├── Logger.cs                 // Logging utility
+│   ├── NetworkUtils.cs           // Network performance checks and tweaks
+├── Tests/                        // Unit tests for core functionality
+│   ├── Managers/
+│   │   ├── ADBManagerTests.cs
+│   │   ├── RegistryManagerTests.cs
+│   │   ├── ProfileManagerTests.cs
+│   ├── Utils/
+│   │   ├── FileUtilsTests.cs
+│   │   ├── LoggerTests.cs
+└── MetaQuestTrayManager.sln       // Solution file
 
-Your project structure looks clean and well-organized! 🎉 Here’s a quick breakdown and confirmation of how everything looks, along with a few suggestions to make it even better.
-
----
 
 ### **Current Structure Analysis**
 1. **Managers (Core Logic)**  
