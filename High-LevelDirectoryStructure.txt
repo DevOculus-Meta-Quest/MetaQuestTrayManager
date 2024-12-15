@@ -1,0 +1,32 @@
+MetaQuestTrayManager/
+├── MetaQuestTrayManager.csproj   // Project file
+├── App.xaml                      // Entry point of the application
+├── App.xaml.cs                   // Application-wide events and setup
+├── MainWindow.xaml               // Main user interface for the application
+├── MainWindow.xaml.cs            // MainWindow logic
+├── Resources/                    // Contains static resources
+│   ├── Icons/TrayIcon.ico        // Icon for the tray application
+│   ├── Styles.xaml               // Shared styles and themes
+├── Managers/                     // Core logic modules for managing features
+│   ├── DeviceManager.cs          // Detects headsets and GPU
+│   ├── ProfileManager.cs         // Manages game profiles
+│   ├── AudioManager.cs           // Handles audio switching and configurations
+│   ├── GameLibraryManager.cs     // Scans Oculus/Steam game libraries
+│   ├── OptimizationManager.cs    // Handles OculusDebugToolCLI and tweaks
+│   ├── ADBManager.cs             // Communicates with the headset via ADB
+│   ├── AirlinkManager.cs         // Manages Airlink settings
+│   ├── RegistryManager.cs        // Applies registry-based optimizations
+├── Utils/                        // Helper and utility classes
+│   ├── Logger.cs                 // Centralized logging functionality
+│   ├── FileUtils.cs              // Handles file operations
+│   ├── CommandRunner.cs          // Runs CLI commands
+│   ├── NetworkUtils.cs           // Manages network checks and optimizations
+├── Models/                       // Contains data models
+│   ├── GameProfile.cs            // Data model for game profiles
+│   ├── DeviceInfo.cs             // Data model for detected headsets/GPU
+│   ├── AudioProfile.cs           // Data model for audio configurations
+├── Views/                        // Additional WPF Views
+│   ├── ProfilesView.xaml         // UI for managing profiles
+│   ├── ProfilesView.xaml.cs      // Logic for ProfilesView.xaml
+│   ├── AirlinkView.xaml          // UI for Airlink settings
+│   ├── AirlinkView.xaml.cs       // Logic for AirlinkView.xaml
