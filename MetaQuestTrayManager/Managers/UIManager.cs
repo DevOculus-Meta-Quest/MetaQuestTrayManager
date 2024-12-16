@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using OVR_Dash_Manager.Functions.Steam;
 
 namespace MetaQuestTrayManager.Managers
 {
