@@ -82,3 +82,22 @@ MetaQuestTrayManager/
 5. **App and Configuration**  
    - `App.xaml` and `App.xaml.cs`: Handles application lifecycle and startup.  
    - `AssemblyInfo.cs`: Project assembly metadata.
+   
+
+### **Summary of Required NuGet Packages**
+
+| Package Name                        | Purpose                                   |
+|-------------------------------------|-------------------------------------------|
+| Newtonsoft.Json                     | JSON parsing for settings or profiles.    |
+| Hardcodet.NotifyIcon.Wpf            | System tray icon support.                 |
+| Microsoft.Win32.Registry            | Windows Registry management.              |
+| Microsoft.Extensions.Configuration.Json | Configuration using `settings.json`.    |
+| System.Management                   | WMI for hardware and device detection.    |
+| NAudio                              | Switching audio input/output devices.     |
+
+---
+
+With **NAudio**, you'll be able to:
+- Retrieve the list of available audio devices.
+- Change the default input/output audio device programmatically.
+- Restore the previous audio device configuration after the session.
