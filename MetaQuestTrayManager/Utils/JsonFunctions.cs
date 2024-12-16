@@ -3,7 +3,6 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using MetaQuestTrayManager.Utils;
 
 namespace MetaQuestTrayManager.Utils
 {
@@ -66,6 +65,18 @@ namespace MetaQuestTrayManager.Utils
         }
 
         /// <summary>
+        /// Creates custom JsonSerializerSettings with specified fields ignored during serialization/deserialization.
+        /// </summary>
+        private static JsonSerializerSettings CreateSettingsWithIgnoredFields<T>(JsonSerializerSettings baseSettings, params string[] ignoredFields)
+        {
+            var customSettings = DeepCopySettings(baseSettings);
+            var resolver = new IgnorableSerializerContractResolver();
+            resolver.Ignore(typeof(T), ignoredFields);
+            customSettings.ContractResolver = resolver;
+            return customSettings;
+        }
+
+        /// <summary>
         /// Creates a deep copy of the given JsonSerializerSettings.
         /// </summary>
         private static JsonSerializerSettings DeepCopySettings(JsonSerializerSettings settings)
@@ -101,18 +112,6 @@ namespace MetaQuestTrayManager.Utils
                 TypeNameAssemblyFormatHandling = settings.TypeNameAssemblyFormatHandling
             };
         }
-
-        /// <summary>
-        /// Creates custom JsonSerializerSettings with specified fields ignored during serialization/deserialization.
-        /// </summary>
-        private static JsonSerializerSettings CreateSettingsWithIgnoredFields<T>(JsonSerializerSettings baseSettings, params string[] ignoredFields)
-        {
-            var customSettings = DeepCopySettings(baseSettings);
-            var resolver = new IgnorableSerializerContractResolver();
-            resolver.Ignore(typeof(T), ignoredFields);
-            customSettings.ContractResolver = resolver;
-            return customSettings;
-        }
     }
 
     /// <summary>
@@ -122,8 +121,14 @@ namespace MetaQuestTrayManager.Utils
     {
         private readonly Dictionary<Type, HashSet<string>> _ignoredProperties = new();
 
+        /// <summary>
+        /// Adds properties to be ignored for a specific type.
+        /// </summary>
         public void Ignore(Type type, params string[] propertyNames)
         {
+            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (propertyNames == null || propertyNames.Length == 0) throw new ArgumentNullException(nameof(propertyNames));
+
             if (!_ignoredProperties.ContainsKey(type))
             {
                 _ignoredProperties[type] = new HashSet<string>();
@@ -135,11 +140,15 @@ namespace MetaQuestTrayManager.Utils
             }
         }
 
+        /// <summary>
+        /// Checks if a property should be ignored during serialization/deserialization.
+        /// </summary>
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             var property = base.CreateProperty(member, memberSerialization);
 
-            if (_ignoredProperties.TryGetValue(property.DeclaringType, out var properties) &&
+            if (member.DeclaringType != null &&
+                _ignoredProperties.TryGetValue(member.DeclaringType, out var properties) &&
                 properties.Contains(property.PropertyName))
             {
                 property.ShouldSerialize = _ => false;
