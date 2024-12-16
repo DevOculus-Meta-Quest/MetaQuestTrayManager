@@ -149,6 +149,7 @@ namespace MetaQuestTrayManager.Utils
 
             if (member.DeclaringType != null &&
                 _ignoredProperties.TryGetValue(member.DeclaringType, out var properties) &&
+                !string.IsNullOrEmpty(property.PropertyName) && // Null check added here
                 properties.Contains(property.PropertyName))
             {
                 property.ShouldSerialize = _ => false;
