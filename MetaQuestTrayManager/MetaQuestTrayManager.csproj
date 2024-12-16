@@ -8,11 +8,14 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <!-- Include Resources -->
   <ItemGroup>
     <Folder Include="Resources\Binaries\" />
   </ItemGroup>
 
+  <!-- Package References -->
   <ItemGroup>
+    <PackageReference Include="AdvancedSharpAdbClient" Version="3.3.13" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
@@ -22,6 +25,20 @@
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.0" />
   </ItemGroup>
 
+  <!-- Settings File -->
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <!-- Binaries for ADB and Support DLLs -->
   <ItemGroup>
     <None Update="Resources\Binaries\adb.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
