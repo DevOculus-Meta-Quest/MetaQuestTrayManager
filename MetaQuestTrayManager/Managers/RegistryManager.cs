@@ -15,11 +15,14 @@ namespace MetaQuestTrayManager.Managers
 
     public static class RegistryManager
     {
-        public static RegistryKey GetRegistryKey(RegistryKeyType type, string keyLocation)
+        /// <summary>
+        /// Gets a registry key based on the type and key location. Returns null if the key cannot be opened.
+        /// </summary>
+        public static RegistryKey? GetRegistryKey(RegistryKeyType type, string keyLocation)
         {
             try
             {
-                var registryKey = type switch
+                return type switch
                 {
                     RegistryKeyType.ClassRoot => Registry.ClassesRoot.OpenSubKey(keyLocation, writable: true),
                     RegistryKeyType.CurrentUser => Registry.CurrentUser.OpenSubKey(keyLocation, writable: true),
@@ -28,8 +31,6 @@ namespace MetaQuestTrayManager.Managers
                     RegistryKeyType.CurrentConfig => Registry.CurrentConfig.OpenSubKey(keyLocation, writable: true),
                     _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
                 };
-
-                return registryKey;
             }
             catch (Exception ex)
             {
@@ -38,6 +39,9 @@ namespace MetaQuestTrayManager.Managers
             }
         }
 
+        /// <summary>
+        /// Sets a registry key value. Returns false if an error occurs.
+        /// </summary>
         public static bool SetKeyValue(RegistryKey key, string keyName, object value, RegistryValueKind valueKind)
         {
             try
@@ -54,7 +58,10 @@ namespace MetaQuestTrayManager.Managers
             }
         }
 
-        public static string GetKeyValueString(RegistryKeyType type, string keyLocation, string keyName)
+        /// <summary>
+        /// Gets the value of a registry key as a string. Returns null if the key or value does not exist.
+        /// </summary>
+        public static string? GetKeyValueString(RegistryKeyType type, string keyLocation, string keyName)
         {
             try
             {
@@ -68,6 +75,9 @@ namespace MetaQuestTrayManager.Managers
             }
         }
 
+        /// <summary>
+        /// Writes a value to the registry. Returns false if an error occurs.
+        /// </summary>
         public static bool WriteRegistryValue(RegistryKeyType type, string keyPath, string valueName, object value, RegistryValueKind valueKind)
         {
             try
@@ -95,6 +105,23 @@ namespace MetaQuestTrayManager.Managers
             {
                 ErrorLogger.LogError(ex, $"Failed to write registry value {valueName} to {keyPath}");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Reads a registry key value as an object. Returns null if the key or value does not exist.
+        /// </summary>
+        public static object? ReadRegistryValue(RegistryKeyType type, string keyPath, string valueName)
+        {
+            try
+            {
+                using var key = GetRegistryKey(type, keyPath);
+                return key?.GetValue(valueName);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError(ex, $"Failed to read value {valueName} from {keyPath}");
+                return null;
             }
         }
     }
