@@ -1,101 +1,165 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AdvancedSharpAdbClient;
+using MetaQuestTrayManager.Utils;
+using System;
 using System.Diagnostics;
 using System.IO;
-using MetaQuestTrayManager.Utils;
+using System.Threading;
 
 namespace MetaQuestTrayManager.Managers
 {
-    public class ADBManager
+    public static class ADBManager
     {
-        private readonly string adbPath;
+        private static Process ADBServer;
 
-        public ADBManager()
+        /// <summary>
+        /// Starts the ADB server if it's not already running.
+        /// </summary>
+        public static void StartADB()
         {
-            try
+            if (!AdbServer.Instance.GetStatus().IsRunning)
             {
-                adbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Binaries", "adb.exe");
-
-                // Verify that adb.exe exists at the specified location
-                if (!File.Exists(adbPath))
+                var server = new AdbServer();
+                try
                 {
-                    throw new FileNotFoundException("ADB executable not found.", adbPath);
+                    ProcessWatcher.ProcessStarted += Process_Watcher_ProcessStarted;
+
+                    var result = server.StartServer(@".\Resources\Binaries\adb.exe", false);
+
+                    if (result != null && !result.ToString().Contains("started", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Debug.WriteLine("Cannot start ADB server.");
+                    }
+
+                    var removeWatcherThread = new Thread(RemoveWatcher);
+                    removeWatcherThread.Start();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                ErrorLogger.LogError(ex, "Failed to initialize ADBManager. Ensure adb.exe is in the correct path.");
-                throw; // Rethrow to alert the calling code
+                VerifyExistingADBInstances();
             }
         }
 
         /// <summary>
-        /// Runs an ADB command and returns the output.
+        /// Stops the ADB server.
         /// </summary>
-        public string RunCommand(string arguments)
+        public static void StopADB()
         {
-            try
+            if (ADBServer != null)
             {
-                using (var process = new Process())
+                try
                 {
-                    process.StartInfo = new ProcessStartInfo
-                    {
-                        FileName = adbPath,
-                        Arguments = arguments,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    };
-
-                    process.Start();
-
-                    // Read the standard output and error streams
-                    string output = process.StandardOutput.ReadToEnd();
-                    string errorOutput = process.StandardError.ReadToEnd();
-
-                    process.WaitForExit();
-
-                    if (process.ExitCode != 0)
-                    {
-                        throw new InvalidOperationException($"ADB command failed with error: {errorOutput}");
-                    }
-
-                    return output;
+                    ADBServer.Kill();
                 }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.LogError(ex, $"Failed to run ADB command: '{arguments}'");
-                return string.Empty; // Return an empty string to signify failure
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
             }
         }
 
         /// <summary>
-        /// Retrieves a list of connected ADB devices.
+        /// Installs an APK file on the connected device.
         /// </summary>
-        public List<string> GetConnectedDevices()
+        public static void InstallAPK(string apkPath)
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = @".\Resources\Binaries\adb.exe",
+                Arguments = $"install \"{apkPath}\"",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (var process = new Process { StartInfo = startInfo })
+            {
+                process.Start();
+                var errorOutput = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                if (process.ExitCode != 0 || !string.IsNullOrEmpty(errorOutput))
+                {
+                    var exception = new Exception($"Error installing APK. Exit Code: {process.ExitCode}. Error: {errorOutput}");
+                    ErrorLogger.LogError(exception);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes a custom ADB command.
+        /// </summary>
+        public static string ExecuteCommand(string command)
         {
             try
             {
-                string output = RunCommand("devices");
-                var devices = new List<string>();
-
-                foreach (var line in output.Split('\n'))
+                var startInfo = new ProcessStartInfo
                 {
-                    if (line.Contains("\tdevice"))
-                    {
-                        devices.Add(line.Split('\t')[0]);
-                    }
-                }
+                    FileName = @".\Resources\Binaries\adb.exe",
+                    Arguments = command,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
 
-                return devices;
+                using (var process = Process.Start(startInfo))
+                using (var reader = process.StandardOutput)
+                {
+                    return reader.ReadToEnd();
+                }
             }
             catch (Exception ex)
             {
-                ErrorLogger.LogError(ex, "Failed to retrieve connected ADB devices.");
-                return new List<string>(); // Return an empty list on failure
+                ErrorLogger.LogError(ex);
+                return null;
             }
         }
+
+        #region File Management
+        public static string ListFiles(string directory) => ExecuteCommand($"shell ls {directory}");
+
+        public static void DeleteFile(string filePath) => ExecuteCommand($"shell rm {filePath}");
+
+        public static void UploadFile(string localPath, string remotePath) => ExecuteCommand($"push {localPath} {remotePath}");
+
+        public static void DownloadFile(string remotePath, string localPath) => ExecuteCommand($"pull {remotePath} {localPath}");
+
+        public static void CreateDirectory(string directoryPath) => ExecuteCommand($"shell mkdir {directoryPath}");
+        #endregion
+
+        #region Private Helpers
+        private static void VerifyExistingADBInstances()
+        {
+            var runningAdbs = Process.GetProcessesByName("adb");
+            var myAdbLocation = Path.Combine(Environment.CurrentDirectory, "Resources", "Binaries", "adb.exe");
+
+            foreach (var process in runningAdbs)
+            {
+                try
+                {
+                    if (process.MainModule.FileName == myAdbLocation)
+                        Process_Watcher_ProcessStarted(process.ProcessName, process.Id);
+                }
+                catch { /* Ignore processes we cannot access */ }
+            }
+        }
+
+        private static void Process_Watcher_ProcessStarted(string processName, int processId)
+        {
+            if (processName == "adb")
+                ADBServer = Process.GetProcessById(processId);
+        }
+
+        private static void RemoveWatcher()
+        {
+            Thread.Sleep(1000);
+            ProcessWatcher.ProcessStarted -= Process_Watcher_ProcessStarted;
+        }
+        #endregion
     }
 }
