@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using MetaQuestTrayManager.Utils;
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Steam
 {
     public class SteamAppDetails

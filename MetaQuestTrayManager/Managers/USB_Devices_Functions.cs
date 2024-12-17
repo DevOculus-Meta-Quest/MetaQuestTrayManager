@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Management;
 using MetaQuestTrayManager.Utils;
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers
 {
     /// <summary>

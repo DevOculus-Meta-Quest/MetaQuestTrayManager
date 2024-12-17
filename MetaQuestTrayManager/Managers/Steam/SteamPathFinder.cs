@@ -6,6 +6,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using MetaQuestTrayManager.Utils;
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Steam
 {
     /// <summary>

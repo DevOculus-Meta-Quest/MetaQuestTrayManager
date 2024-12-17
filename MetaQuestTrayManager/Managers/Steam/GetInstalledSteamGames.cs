@@ -4,6 +4,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using MetaQuestTrayManager.Utils; // For ErrorLogger
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Steam
 {
     /// <summary>

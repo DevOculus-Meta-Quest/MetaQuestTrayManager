@@ -5,6 +5,8 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Oculus
 {
     public static class OculusRunning

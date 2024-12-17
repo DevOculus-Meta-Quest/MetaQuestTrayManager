@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers
 {
     public static class ADBManager

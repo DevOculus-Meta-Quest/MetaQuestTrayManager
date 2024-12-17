@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using MetaQuestTrayManager.Utils;
 using System.Diagnostics; // Ensure ErrorLogger is available
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Steam
 {
     /// <summary>

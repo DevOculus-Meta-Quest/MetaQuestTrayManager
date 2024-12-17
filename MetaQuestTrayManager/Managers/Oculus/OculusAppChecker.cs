@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Oculus
 {
     /// <summary>

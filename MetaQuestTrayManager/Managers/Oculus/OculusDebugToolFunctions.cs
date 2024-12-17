@@ -5,6 +5,8 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Oculus
 {
     /// <summary>

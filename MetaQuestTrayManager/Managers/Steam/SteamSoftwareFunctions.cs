@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Steam
 {
     public static class SteamSoftwareFunctions

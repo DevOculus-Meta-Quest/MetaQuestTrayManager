@@ -11,6 +11,8 @@ using MetaQuestTrayManager.Managers;      // Service_Manager, TimerManager
 using MetaQuestTrayManager.Managers.Oculus; // Oculus_Link
 using MetaQuestTrayManager.Utils;         // WindowUtilities and ErrorLogger
 
+#nullable disable
+
 namespace MetaQuestTrayManager.Managers.Steam
 {
     public static class SteamRunning
