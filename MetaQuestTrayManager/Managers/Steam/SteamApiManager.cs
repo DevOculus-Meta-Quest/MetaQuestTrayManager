@@ -4,7 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using MetaQuestTrayManager.Utils; // Ensure ErrorLogger is available
+using MetaQuestTrayManager.Utils;
+using System.Diagnostics; // Ensure ErrorLogger is available
 
 namespace MetaQuestTrayManager.Managers.Steam
 {
