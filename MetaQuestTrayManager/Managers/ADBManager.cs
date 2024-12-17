@@ -9,7 +9,7 @@ namespace MetaQuestTrayManager.Managers
 {
     public static class ADBManager
     {
-        private static Process ADBServer;
+        private static Process? _adbServer; // Marked nullable because it can be null
 
         /// <summary>
         /// Starts the ADB server if it's not already running.
@@ -25,7 +25,7 @@ namespace MetaQuestTrayManager.Managers
 
                     var result = server.StartServer(@".\Resources\Binaries\adb.exe", false);
 
-                    if (result != null && !result.ToString().Contains("started", StringComparison.OrdinalIgnoreCase))
+                    if (result == null || !result.ToString().Contains("started", StringComparison.OrdinalIgnoreCase))
                     {
                         Debug.WriteLine("Cannot start ADB server.");
                     }
@@ -49,11 +49,13 @@ namespace MetaQuestTrayManager.Managers
         /// </summary>
         public static void StopADB()
         {
-            if (ADBServer != null)
+            if (_adbServer != null)
             {
                 try
                 {
-                    ADBServer.Kill();
+                    _adbServer.Kill();
+                    _adbServer.Dispose();
+                    _adbServer = null; // Explicitly nullify after stopping
                 }
                 catch (Exception ex)
                 {
@@ -108,15 +110,20 @@ namespace MetaQuestTrayManager.Managers
                 };
 
                 using (var process = Process.Start(startInfo))
-                using (var reader = process.StandardOutput)
                 {
-                    return reader.ReadToEnd();
+                    if (process == null)
+                        throw new InvalidOperationException("Failed to start ADB process.");
+
+                    using (var reader = process.StandardOutput)
+                    {
+                        return reader.ReadToEnd();
+                    }
                 }
             }
             catch (Exception ex)
             {
                 ErrorLogger.LogError(ex);
-                return null;
+                return string.Empty; // Return an empty string instead of null
             }
         }
 
@@ -142,17 +149,24 @@ namespace MetaQuestTrayManager.Managers
             {
                 try
                 {
-                    if (process.MainModule.FileName == myAdbLocation)
+                    if (process.MainModule?.FileName == myAdbLocation)
+                    {
                         Process_Watcher_ProcessStarted(process.ProcessName, process.Id);
+                    }
                 }
-                catch { /* Ignore processes we cannot access */ }
+                catch
+                {
+                    // Ignore processes we cannot access
+                }
             }
         }
 
         private static void Process_Watcher_ProcessStarted(string processName, int processId)
         {
             if (processName == "adb")
-                ADBServer = Process.GetProcessById(processId);
+            {
+                _adbServer = Process.GetProcessById(processId);
+            }
         }
 
         private static void RemoveWatcher()
